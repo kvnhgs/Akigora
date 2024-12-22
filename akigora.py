@@ -32,7 +32,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-st.set_option('deprecation.showPyplotGlobalUse', False)
 sns.set(style="whitegrid")
 style_metric_cards(background_color="#FFFFFF", border_left_color="#DE1F1F", box_shadow=True)
 
@@ -48,39 +47,66 @@ selected = option_menu(
 # Fonctions graphiques
 
 
-def create_bar_chart(data, x, y, rotation=45):
-    plt.figure(figsize=(10, 8))
-    sns.barplot(data=data, x=x, y=y, color="red", edgecolor="black", linewidth=3)
-    plt.xlabel(x)
-    plt.ylabel(y)
-    plt.xticks(rotation=rotation)
-    st.pyplot()
+import streamlit as st
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.express as px
 
+def create_bar_chart(data, x, y, rotation=45):
+    # Créer explicitement la figure et l'axe
+    fig, ax = plt.subplots(figsize=(10, 8))
+    # Dessiner le barplot sur l'axe
+    sns.barplot(data=data, x=x, y=y, color="red", edgecolor="black", linewidth=3, ax=ax)
+    
+    # Personnaliser les axes
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
+    # Rotation des étiquettes de l'axe X
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation)
+
+    # Afficher la figure dans Streamlit
+    st.pyplot(fig)
 
 def create_pie_chart(names, values, colors=None, line_color='black', line_width=3):
+    # Aucun changement à faire ici, car on utilise Plotly
     fig = px.pie(names=names, values=values)
-    fig.update_traces(marker=dict(colors=colors if colors else ['black', 'red'],
-                                  line=dict(color=line_color, width=line_width)), textinfo='label+percent')
+    fig.update_traces(
+        marker=dict(
+            colors=colors if colors else ['black', 'red'],
+            line=dict(color=line_color, width=line_width)
+        ),
+        textinfo='label+percent'
+    )
     fig.update_layout(font=dict(size=20), showlegend=True)
     st.plotly_chart(fig)
 
-
 def create_countplot(data, x, xlabel, ylabel, rotation=45, color="red", figsize=(14, 11)):
-    plt.figure(figsize=figsize)
-    sns.countplot(data=data, x=x, color=color, edgecolor="black", linewidth=2, width=0.5)
-    plt.xlabel(xlabel, size=20)
-    plt.ylabel(ylabel, size=20)
-    plt.xticks(rotation=rotation, ha='right')
-    st.pyplot()
+    # Créer explicitement la figure et l'axe
+    fig, ax = plt.subplots(figsize=figsize)
+    # Dessiner le countplot sur l'axe
+    sns.countplot(data=data, x=x, color=color, edgecolor="black", linewidth=2, width=0.5, ax=ax)
+    
+    # Personnaliser les axes
+    ax.set_xlabel(xlabel, size=20)
+    ax.set_ylabel(ylabel, size=20)
+    # Rotation des étiquettes de l'axe X
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=rotation, ha='right')
 
+    # Afficher la figure dans Streamlit
+    st.pyplot(fig)
 
 def create_barh_chart(data, x, y, xlabel, ylabel, figsize=(10, 8), color="red", linewidth=2):
+    # Ici, vous aviez déjà la bonne approche
     fig, ax = plt.subplots(figsize=figsize)
     data = data.sort_values(by=x, ascending=True)
     ax.barh(data[y], data[x], color=color, edgecolor="black", linewidth=linewidth)
+    
     ax.set_xlabel(xlabel, size=20)
     ax.set_ylabel(ylabel, size=20)
+
+    # Afficher la figure dans Streamlit
     st.pyplot(fig)
+
 
 if selected == "Projet":
 
